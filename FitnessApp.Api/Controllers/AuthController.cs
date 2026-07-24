@@ -1,4 +1,5 @@
-﻿using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.Data;
+using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace FitnessApp.Api.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration, ApplicationDbContext context)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -58,6 +61,14 @@ namespace FitnessApp.Api.Controllers
             {
                 return BadRequest(roleResult.Errors);
             }
+
+            var profile = new UserProfile
+            {
+                UserId = user.Id
+            };
+
+            _context.UserProfiles.Add(profile);
+            await _context.SaveChangesAsync();
 
             return Ok("Korisnik je uspješno registriran.");
         }

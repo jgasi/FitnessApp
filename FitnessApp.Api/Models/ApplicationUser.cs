@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace FitnessApp.Api.Models
+namespace FitnessApp.Api.Models;
+
+public class ApplicationUser : IdentityUser
 {
-    public class ApplicationUser : IdentityUser
-    {
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    }
+    public string FirstName { get; set; } = string.Empty;
+
+    public string LastName { get; set; } = string.Empty;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public UserProfile? UserProfile { get; set; }
 }

@@ -4,6 +4,7 @@ using FitnessApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessApp.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260724144251_AddExerciseTables")]
+    partial class AddExerciseTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,58 +154,6 @@ namespace FitnessApp.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ExerciseCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Snaga"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Kardio"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Istezanje"
-                        });
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.FitnessGoal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FitnessGoals");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Mršavljenje"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Povećanje mišićne mase"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Održavanje forme"
-                        });
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Models.MuscleGroup", b =>
@@ -221,88 +172,6 @@ namespace FitnessApp.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MuscleGroups");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Prsa"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Leđa"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Ramena"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Biceps"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Triceps"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Noge"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Trbuh"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Cijelo tijelo"
-                        });
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.UserProfile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal?>("CurrentWeightKg")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("FitnessGoalId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Gender")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal?>("HeightCm")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FitnessGoalId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -457,24 +326,6 @@ namespace FitnessApp.Api.Migrations
                     b.Navigation("MuscleGroup");
                 });
 
-            modelBuilder.Entity("FitnessApp.Api.Models.UserProfile", b =>
-                {
-                    b.HasOne("FitnessApp.Api.Models.FitnessGoal", "FitnessGoal")
-                        .WithMany("UserProfiles")
-                        .HasForeignKey("FitnessGoalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("FitnessApp.Api.Models.ApplicationUser", "User")
-                        .WithOne("UserProfile")
-                        .HasForeignKey("FitnessApp.Api.Models.UserProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FitnessGoal");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -526,19 +377,9 @@ namespace FitnessApp.Api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FitnessApp.Api.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("UserProfile");
-                });
-
             modelBuilder.Entity("FitnessApp.Api.Models.ExerciseCategory", b =>
                 {
                     b.Navigation("Exercises");
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.FitnessGoal", b =>
-                {
-                    b.Navigation("UserProfiles");
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Models.MuscleGroup", b =>
