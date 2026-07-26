@@ -1,8 +1,7 @@
-﻿using FitnessApp.Api.Data;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
+using FitnessApp.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FitnessApp.Api.Controllers;
 
@@ -11,25 +10,17 @@ namespace FitnessApp.Api.Controllers;
 [Authorize]
 public class MuscleGroupsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ILookupService _lookupService;
 
-    public MuscleGroupsController(ApplicationDbContext context)
+    public MuscleGroupsController(ILookupService lookupService)
     {
-        _context = context;
+        _lookupService = lookupService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<LookupDto>>> GetAll()
     {
-        var muscleGroups = await _context.MuscleGroups
-            .AsNoTracking()
-            .Select(x => new LookupDto
-            {
-                Id = x.Id,
-                Name = x.Name
-            })
-            .ToListAsync();
-
+        var muscleGroups = await _lookupService.GetMuscleGroupsAsync();
         return Ok(muscleGroups);
     }
 }

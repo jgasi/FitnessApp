@@ -24,12 +24,10 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Mappings\" />
     <Folder Include="Middlewares\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Validators\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

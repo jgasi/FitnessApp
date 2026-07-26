@@ -1,11 +1,8 @@
 ﻿using System.Security.Claims;
-using FitnessApp.Api.Data;
 using FitnessApp.Api.DTOs;
-using FitnessApp.Api.Models;
+using FitnessApp.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FitnessApp.Api.Controllers;
 
@@ -14,13 +11,11 @@ namespace FitnessApp.Api.Controllers;
 [Authorize]
 public class ProfilesController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IProfileService _profileService;
 
-    public ProfilesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public ProfilesController(IProfileService profileService)
     {
-        _context = context;
-        _userManager = userManager;
+        _profileService = profileService;
     }
 
     [HttpGet("me")]
@@ -33,26 +28,7 @@ public class ProfilesController : ControllerBase
             return Unauthorized();
         }
 
-        var profile = await _context.UserProfiles
-            .AsNoTracking()
-            .Include(x => x.FitnessGoal)
-            .Include(x => x.User)
-            .Where(x => x.UserId == userId)
-            .Select(x => new UserProfileReadDto
-            {
-                Id = x.Id,
-                UserId = x.UserId,
-                FirstName = x.User.FirstName,
-                LastName = x.User.LastName,
-                Email = x.User.Email ?? string.Empty,
-                FitnessGoalId = x.FitnessGoalId,
-                FitnessGoalName = x.FitnessGoal != null ? x.FitnessGoal.Name : null,
-                DateOfBirth = x.DateOfBirth,
-                Gender = x.Gender,
-                HeightCm = x.HeightCm,
-                CurrentWeightKg = x.CurrentWeightKg
-            })
-            .FirstOrDefaultAsync();
+        var profile = await _profileService.GetMyProfileAsync(userId);
 
         if (profile == null)
         {
@@ -72,31 +48,20 @@ public class ProfilesController : ControllerBase
             return Unauthorized();
         }
 
-        var profile = await _context.UserProfiles
-            .FirstOrDefaultAsync(x => x.UserId == userId);
-
-        if (profile == null)
+        try
         {
-            return NotFound("Profil nije pronađen.");
-        }
+            var updated = await _profileService.UpdateMyProfileAsync(userId, dto);
 
-        if (dto.FitnessGoalId.HasValue)
-        {
-            var goalExists = await _context.FitnessGoals.AnyAsync(x => x.Id == dto.FitnessGoalId.Value);
-            if (!goalExists)
+            if (!updated)
             {
-                return BadRequest("Fitness cilj ne postoji.");
+                return NotFound("Profil nije pronađen.");
             }
+
+            return NoContent();
         }
-
-        profile.FitnessGoalId = dto.FitnessGoalId;
-        profile.DateOfBirth = dto.DateOfBirth;
-        profile.Gender = dto.Gender;
-        profile.HeightCm = dto.HeightCm;
-        profile.CurrentWeightKg = dto.CurrentWeightKg;
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

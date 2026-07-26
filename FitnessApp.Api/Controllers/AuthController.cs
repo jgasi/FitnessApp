@@ -16,13 +16,13 @@ namespace FitnessApp.Api.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration, ApplicationDbContext context)
+        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _configuration = configuration;
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("register")]
@@ -67,8 +67,8 @@ namespace FitnessApp.Api.Controllers
                 UserId = user.Id
             };
 
-            _context.UserProfiles.Add(profile);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.UserProfiles.AddAsync(profile);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok("Korisnik je uspješno registriran.");
         }

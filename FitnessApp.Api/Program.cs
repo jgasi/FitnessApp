@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using FitnessApp.Api.Data.Repositories;
+using FitnessApp.Api.Services.Implementations;
+using FitnessApp.Api.Services.Interfaces;
 
 namespace FitnessApp.Api
 {
@@ -58,6 +61,14 @@ namespace FitnessApp.Api
             });
 
             builder.Services.AddAuthorization();
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            builder.Services.AddScoped<IExerciseService, ExerciseService>();
+            builder.Services.AddScoped<ILookupService, LookupService>();
+            builder.Services.AddScoped<IProfileService, ProfileService>();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
