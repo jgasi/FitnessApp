@@ -1,14 +1,14 @@
+using System.Text;
 using FitnessApp.Api.Data;
+using FitnessApp.Api.Data.Repositories;
 using FitnessApp.Api.Models;
+using FitnessApp.Api.Services.Implementations;
+using FitnessApp.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using FitnessApp.Api.Data.Repositories;
-using FitnessApp.Api.Services.Implementations;
-using FitnessApp.Api.Services.Interfaces;
 
 namespace FitnessApp.Api
 {
@@ -68,6 +68,8 @@ namespace FitnessApp.Api
             builder.Services.AddScoped<IExerciseService, ExerciseService>();
             builder.Services.AddScoped<ILookupService, LookupService>();
             builder.Services.AddScoped<IProfileService, ProfileService>();
+            builder.Services.AddScoped<IWorkoutPlanService, WorkoutPlanService>();
+            builder.Services.AddScoped<IWorkoutSessionService, WorkoutSessionService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

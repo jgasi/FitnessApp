@@ -12,6 +12,11 @@ public class UnitOfWork : IUnitOfWork
     private IGenericRepository<MuscleGroup>? _muscleGroups;
     private IGenericRepository<FitnessGoal>? _fitnessGoals;
     private IGenericRepository<UserProfile>? _userProfiles;
+    private IGenericRepository<WorkoutPlan>? _workoutPlans;
+    private IGenericRepository<WorkoutPlanExercise>? _workoutPlanExercises;
+    private IGenericRepository<WorkoutSession>? _workoutSessions;
+    private IGenericRepository<WorkoutSessionExercise>? _workoutSessionExercises;
+    private IGenericRepository<CompletedSet>? _completedSets;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -23,6 +28,11 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<MuscleGroup> MuscleGroups => _muscleGroups ??= new GenericRepository<MuscleGroup>(_context);
     public IGenericRepository<FitnessGoal> FitnessGoals => _fitnessGoals ??= new GenericRepository<FitnessGoal>(_context);
     public IGenericRepository<UserProfile> UserProfiles => _userProfiles ??= new GenericRepository<UserProfile>(_context);
+    public IGenericRepository<WorkoutPlan> WorkoutPlans => _workoutPlans ??= new GenericRepository<WorkoutPlan>(_context);
+    public IGenericRepository<WorkoutPlanExercise> WorkoutPlanExercises => _workoutPlanExercises ??= new GenericRepository<WorkoutPlanExercise>(_context);
+    public IGenericRepository<WorkoutSession> WorkoutSessions => _workoutSessions ??= new GenericRepository<WorkoutSession>(_context);
+    public IGenericRepository<WorkoutSessionExercise> WorkoutSessionExercises => _workoutSessionExercises ??= new GenericRepository<WorkoutSessionExercise>(_context);
+    public IGenericRepository<CompletedSet> CompletedSets => _completedSets ??= new GenericRepository<CompletedSet>(_context);
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

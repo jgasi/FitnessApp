@@ -10,6 +10,11 @@ public interface IUnitOfWork
     IGenericRepository<MuscleGroup> MuscleGroups { get; }
     IGenericRepository<FitnessGoal> FitnessGoals { get; }
     IGenericRepository<UserProfile> UserProfiles { get; }
+    IGenericRepository<WorkoutPlan> WorkoutPlans { get; }
+    IGenericRepository<WorkoutPlanExercise> WorkoutPlanExercises { get; }
+    IGenericRepository<WorkoutSession> WorkoutSessions { get; }
+    IGenericRepository<WorkoutSessionExercise> WorkoutSessionExercises { get; }
+    IGenericRepository<CompletedSet> CompletedSets { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

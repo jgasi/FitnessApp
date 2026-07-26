@@ -4,6 +4,7 @@ using FitnessApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessApp.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260726161442_AddWorkoutPlans")]
+    partial class AddWorkoutPlans
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,39 +99,6 @@ namespace FitnessApp.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.CompletedSet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("Reps")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SetNumber")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("WeightKg")
-                        .HasPrecision(6, 2)
-                        .HasColumnType("decimal(6,2)");
-
-                    b.Property<int>("WorkoutSessionExerciseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkoutSessionExerciseId");
-
-                    b.ToTable("CompletedSets");
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Models.Exercise", b =>
@@ -398,84 +368,6 @@ namespace FitnessApp.Api.Migrations
                     b.ToTable("WorkoutPlanExercises");
                 });
 
-            modelBuilder.Entity("FitnessApp.Api.Models.WorkoutSession", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime>("ScheduledAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Planned");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("WorkoutPlanId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WorkoutPlanId");
-
-                    b.ToTable("WorkoutSessions");
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.WorkoutSessionExercise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExerciseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlannedReps")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlannedRestSeconds")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlannedSets")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkoutSessionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExerciseId");
-
-                    b.HasIndex("WorkoutSessionId");
-
-                    b.ToTable("WorkoutSessionExercises");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -609,17 +501,6 @@ namespace FitnessApp.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FitnessApp.Api.Models.CompletedSet", b =>
-                {
-                    b.HasOne("FitnessApp.Api.Models.WorkoutSessionExercise", "WorkoutSessionExercise")
-                        .WithMany("CompletedSets")
-                        .HasForeignKey("WorkoutSessionExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("WorkoutSessionExercise");
-                });
-
             modelBuilder.Entity("FitnessApp.Api.Models.Exercise", b =>
                 {
                     b.HasOne("FitnessApp.Api.Models.ExerciseCategory", "ExerciseCategory")
@@ -685,44 +566,6 @@ namespace FitnessApp.Api.Migrations
                     b.Navigation("Exercise");
 
                     b.Navigation("WorkoutPlan");
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.WorkoutSession", b =>
-                {
-                    b.HasOne("FitnessApp.Api.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessApp.Api.Models.WorkoutPlan", "WorkoutPlan")
-                        .WithMany("WorkoutSessions")
-                        .HasForeignKey("WorkoutPlanId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("WorkoutPlan");
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.WorkoutSessionExercise", b =>
-                {
-                    b.HasOne("FitnessApp.Api.Models.Exercise", "Exercise")
-                        .WithMany()
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FitnessApp.Api.Models.WorkoutSession", "WorkoutSession")
-                        .WithMany("WorkoutSessionExercises")
-                        .HasForeignKey("WorkoutSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Exercise");
-
-                    b.Navigation("WorkoutSession");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -799,18 +642,6 @@ namespace FitnessApp.Api.Migrations
             modelBuilder.Entity("FitnessApp.Api.Models.WorkoutPlan", b =>
                 {
                     b.Navigation("WorkoutPlanExercises");
-
-                    b.Navigation("WorkoutSessions");
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.WorkoutSession", b =>
-                {
-                    b.Navigation("WorkoutSessionExercises");
-                });
-
-            modelBuilder.Entity("FitnessApp.Api.Models.WorkoutSessionExercise", b =>
-                {
-                    b.Navigation("CompletedSets");
                 });
 #pragma warning restore 612, 618
         }

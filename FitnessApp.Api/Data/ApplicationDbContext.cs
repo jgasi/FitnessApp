@@ -17,6 +17,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FitnessGoal> FitnessGoals { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
 
+    public DbSet<WorkoutPlan> WorkoutPlans { get; set; }
+    public DbSet<WorkoutPlanExercise> WorkoutPlanExercises { get; set; }
+
+    public DbSet<WorkoutSession> WorkoutSessions { get; set; }
+    public DbSet<WorkoutSessionExercise> WorkoutSessionExercises { get; set; }
+    public DbSet<CompletedSet> CompletedSets { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
