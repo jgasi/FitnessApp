@@ -15,6 +15,8 @@ public interface IUnitOfWork
     IGenericRepository<WorkoutSession> WorkoutSessions { get; }
     IGenericRepository<WorkoutSessionExercise> WorkoutSessionExercises { get; }
     IGenericRepository<CompletedSet> CompletedSets { get; }
+    IGenericRepository<BodyMeasurement> BodyMeasurements { get; }
+    IGenericRepository<CalorieEntry> CalorieEntries { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -24,6 +24,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<WorkoutSessionExercise> WorkoutSessionExercises { get; set; }
     public DbSet<CompletedSet> CompletedSets { get; set; }
 
+    public DbSet<BodyMeasurement> BodyMeasurements { get; set; }
+    public DbSet<CalorieEntry> CalorieEntries { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
