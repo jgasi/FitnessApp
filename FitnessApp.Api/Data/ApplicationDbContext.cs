@@ -26,8 +26,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<BodyMeasurement> BodyMeasurements { get; set; }
     public DbSet<CalorieEntry> CalorieEntries { get; set; }
-
     public DbSet<FavoriteExercise> FavoriteExercises { get; set; }
+    public DbSet<PersonalRecord> PersonalRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

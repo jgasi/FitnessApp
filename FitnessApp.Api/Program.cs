@@ -73,6 +73,7 @@ namespace FitnessApp.Api
             builder.Services.AddScoped<IBodyMeasurementService, BodyMeasurementService>();
             builder.Services.AddScoped<ICalorieEntryService, CalorieEntryService>();
             builder.Services.AddScoped<IFavoriteExerciseService, FavoriteExerciseService>();
+            builder.Services.AddScoped<IPersonalRecordService, PersonalRecordService>();
 
 
             builder.Services.AddControllers();
