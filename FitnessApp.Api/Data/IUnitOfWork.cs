@@ -17,6 +17,7 @@ public interface IUnitOfWork
     IGenericRepository<CompletedSet> CompletedSets { get; }
     IGenericRepository<BodyMeasurement> BodyMeasurements { get; }
     IGenericRepository<CalorieEntry> CalorieEntries { get; }
+    IGenericRepository<FavoriteExercise> FavoriteExercises { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
