@@ -29,6 +29,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FavoriteExercise> FavoriteExercises { get; set; }
     public DbSet<PersonalRecord> PersonalRecords { get; set; }
 
+    public DbSet<Meal> Meals { get; set; }
+    public DbSet<MealPlan> MealPlans { get; set; }
+    public DbSet<MealPlanMeal> MealPlanMeals { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
