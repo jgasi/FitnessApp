@@ -76,6 +76,7 @@ namespace FitnessApp.Api
             builder.Services.AddScoped<IPersonalRecordService, PersonalRecordService>();
             builder.Services.AddScoped<IMealService, MealService>();
             builder.Services.AddScoped<IMealPlanService, MealPlanService>();
+            builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 
 
             builder.Services.AddControllers();
