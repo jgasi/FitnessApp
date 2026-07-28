@@ -37,6 +37,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.Property(x => x.FirstName)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.LastName)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            entity.Property(x => x.IsActive)
+                .HasDefaultValue(true);
+        });
+
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }

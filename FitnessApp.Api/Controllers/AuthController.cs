@@ -84,6 +84,11 @@ namespace FitnessApp.Api.Controllers
                 return Unauthorized("Neispravno korisničko ime/email ili lozinka.");
             }
 
+            if (!user.IsActive)
+            {
+                return Unauthorized("Korisnički račun je deaktiviran.");
+            }
+
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
 
             if (!isPasswordValid)

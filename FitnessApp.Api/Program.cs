@@ -77,6 +77,7 @@ namespace FitnessApp.Api
             builder.Services.AddScoped<IMealService, MealService>();
             builder.Services.AddScoped<IMealPlanService, MealPlanService>();
             builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 
 
             builder.Services.AddControllers();
@@ -120,7 +121,10 @@ namespace FitnessApp.Api
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
                 await SeedRolesAsync(roleManager);
+                await SeedAdminUserAsync(userManager, builder.Configuration);
             }
 
             if (app.Environment.IsDevelopment())
@@ -149,6 +153,59 @@ namespace FitnessApp.Api
                 {
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
+            }
+        }
+
+        private static async Task SeedAdminUserAsync(
+    UserManager<ApplicationUser> userManager,
+    IConfiguration configuration)
+        {
+            var adminSection = configuration.GetSection("AdminUser");
+
+            var userName = adminSection["UserName"];
+            var email = adminSection["Email"];
+            var password = adminSection["Password"];
+            var firstName = adminSection["FirstName"];
+            var lastName = adminSection["LastName"];
+
+            if (string.IsNullOrWhiteSpace(userName) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(password) ||
+                string.IsNullOrWhiteSpace(firstName) ||
+                string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new InvalidOperationException("AdminUser konfiguracija nije ispravno postavljena u appsettings.json.");
+            }
+
+            var existingAdmin = await userManager.FindByNameAsync(userName);
+
+            if (existingAdmin == null)
+            {
+                var adminUser = new ApplicationUser
+                {
+                    UserName = userName,
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    IsActive = true,
+                    EmailConfirmed = true
+                };
+
+                var createResult = await userManager.CreateAsync(adminUser, password);
+
+                if (!createResult.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Ne mogu kreirati admin korisnika: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                }
+
+                await userManager.AddToRoleAsync(adminUser, "Administrator");
+                return;
+            }
+
+            if (!await userManager.IsInRoleAsync(existingAdmin, "Administrator"))
+            {
+                await userManager.AddToRoleAsync(existingAdmin, "Administrator");
             }
         }
     }
