@@ -1,15 +1,28 @@
-﻿namespace FitnessApp.Api.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FitnessApp.Api.DTOs;
+
+public class RegisterDto
 {
-    public class RegisterDto
-    {
-        public string FirstName { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string FirstName { get; set; } = string.Empty;
 
-        public string LastName { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string LastName { get; set; } = string.Empty;
 
-        public string UserName { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string UserName { get; set; } = string.Empty;
 
-        public string Email { get; set; } = string.Empty;
+    [Required]
+    [EmailAddress]
+    [MaxLength(150)]
+    public string Email { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
-    }
+    [Required]
+    [MinLength(6)]
+    [MaxLength(100)]
+    public string Password { get; set; } = string.Empty;
 }

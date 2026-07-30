@@ -8,6 +8,7 @@ public class CalorieEntryCreateUpdateDto
     public DateTime EntryDate { get; set; }
 
     [Required]
+    [Range(1, int.MaxValue)]
     public int Calories { get; set; }
 
     [MaxLength(2000)]

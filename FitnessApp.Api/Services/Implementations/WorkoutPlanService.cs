@@ -125,6 +125,16 @@ public class WorkoutPlanService : IWorkoutPlanService
                 .ToList()
         };
 
+        if (dto.Exercises.Select(x => x.ExerciseId).Distinct().Count() != dto.Exercises.Count)
+        {
+            throw new ArgumentException("Ista vježba ne smije biti dodana više puta u plan.");
+        }
+
+        if (dto.Exercises.Select(x => x.DisplayOrder).Distinct().Count() != dto.Exercises.Count)
+        {
+            throw new ArgumentException("Redoslijed vježbi mora biti jedinstven.");
+        }
+
         await _unitOfWork.WorkoutPlans.AddAsync(workoutPlan);
         await _unitOfWork.SaveChangesAsync();
 
@@ -186,6 +196,16 @@ public class WorkoutPlanService : IWorkoutPlanService
                 Reps = exercise.Reps,
                 RestSeconds = exercise.RestSeconds
             });
+        }
+
+        if (dto.Exercises.Select(x => x.ExerciseId).Distinct().Count() != dto.Exercises.Count)
+        {
+            throw new ArgumentException("Ista vježba ne smije biti dodana više puta u plan.");
+        }
+
+        if (dto.Exercises.Select(x => x.DisplayOrder).Distinct().Count() != dto.Exercises.Count)
+        {
+            throw new ArgumentException("Redoslijed vježbi mora biti jedinstven.");
         }
 
         await _unitOfWork.SaveChangesAsync();

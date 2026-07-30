@@ -61,6 +61,16 @@ public class WorkoutSessionService : IWorkoutSessionService
 
     public async Task<WorkoutSessionReadDto> CreateAsync(string userId, bool isAdmin, WorkoutSessionCreateDto dto)
     {
+        if (dto.ScheduledAt == default)
+        {
+            throw new ArgumentException("Vrijeme sesije mora biti zadano.");
+        }
+
+        if (dto.ScheduledAt.Year < 2000)
+        {
+            throw new ArgumentException("Datum sesije nije valjan.");
+        }
+
         var planQuery = _unitOfWork.WorkoutPlans.Query()
             .Include(x => x.WorkoutPlanExercises)
                 .ThenInclude(x => x.Exercise)

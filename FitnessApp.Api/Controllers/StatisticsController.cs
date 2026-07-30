@@ -1,15 +1,12 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class StatisticsController : ControllerBase
+public class StatisticsController : BaseApiController
 {
     private readonly IStatisticsService _statisticsService;
 
@@ -21,15 +18,7 @@ public class StatisticsController : ControllerBase
     [HttpGet("me/overview")]
     public async Task<ActionResult<StatisticsOverviewDto>> GetMyOverview()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var overview = await _statisticsService.GetMyOverviewAsync(userId, isAdmin);
-
+        var overview = await _statisticsService.GetMyOverviewAsync(CurrentUserId, IsAdmin);
         return Ok(overview);
     }
 
@@ -38,15 +27,7 @@ public class StatisticsController : ControllerBase
         [FromQuery] DateTime? from = null,
         [FromQuery] DateTime? to = null)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var data = await _statisticsService.GetWeightProgressAsync(userId, isAdmin, from, to);
-
+        var data = await _statisticsService.GetWeightProgressAsync(CurrentUserId, IsAdmin, from, to);
         return Ok(data);
     }
 
@@ -55,60 +36,31 @@ public class StatisticsController : ControllerBase
         [FromQuery] DateTime? from = null,
         [FromQuery] DateTime? to = null)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var data = await _statisticsService.GetCaloriesProgressAsync(userId, isAdmin, from, to);
-
+        var data = await _statisticsService.GetCaloriesProgressAsync(CurrentUserId, IsAdmin, from, to);
         return Ok(data);
     }
 
     [HttpGet("me/workouts-by-month")]
-    public async Task<ActionResult<IEnumerable<StatisticsPointDto>>> GetWorkoutCountsByMonth([FromQuery] int? year = null)
+    public async Task<ActionResult<IEnumerable<StatisticsPointDto>>> GetWorkoutCountsByMonth(
+        [FromQuery] int? year = null)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var data = await _statisticsService.GetWorkoutCountsByMonthAsync(userId, isAdmin, year);
-
+        var data = await _statisticsService.GetWorkoutCountsByMonthAsync(CurrentUserId, IsAdmin, year);
         return Ok(data);
     }
 
     [HttpGet("me/top-exercises")]
-    public async Task<ActionResult<IEnumerable<StatisticsTopExerciseDto>>> GetTopExercises([FromQuery] int take = 5)
+    public async Task<ActionResult<IEnumerable<StatisticsTopExerciseDto>>> GetTopExercises(
+        [FromQuery] int take = 5)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var data = await _statisticsService.GetTopExercisesAsync(userId, isAdmin, take);
-
+        var data = await _statisticsService.GetTopExercisesAsync(CurrentUserId, IsAdmin, take);
         return Ok(data);
     }
 
     [HttpGet("me/recent-records")]
-    public async Task<ActionResult<IEnumerable<StatisticsRecentPersonalRecordDto>>> GetRecentRecords([FromQuery] int take = 10)
+    public async Task<ActionResult<IEnumerable<StatisticsRecentPersonalRecordDto>>> GetRecentRecords(
+        [FromQuery] int take = 10)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var data = await _statisticsService.GetRecentPersonalRecordsAsync(userId, isAdmin, take);
-
+        var data = await _statisticsService.GetRecentPersonalRecordsAsync(CurrentUserId, IsAdmin, take);
         return Ok(data);
     }
 

@@ -1,15 +1,13 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/admin/users")]
 [Authorize(Roles = "Administrator")]
-public class AdminUsersController : ControllerBase
+public class AdminUsersController : BaseApiController
 {
     private readonly IAdminUserService _adminUserService;
 
@@ -41,58 +39,26 @@ public class AdminUsersController : ControllerBase
     [HttpPut("{userId}/role")]
     public async Task<IActionResult> UpdateRole(string userId, [FromBody] AdminUserRoleUpdateDto dto)
     {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var updated = await _adminUserService.UpdateRoleAsync(userId, CurrentUserId, dto);
 
-        if (string.IsNullOrWhiteSpace(currentUserId))
+        if (!updated)
         {
-            return Unauthorized();
+            return NotFound("Korisnik nije pronađen.");
         }
 
-        try
-        {
-            var updated = await _adminUserService.UpdateRoleAsync(userId, currentUserId, dto);
-
-            if (!updated)
-            {
-                return NotFound("Korisnik nije pronađen.");
-            }
-
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 
     [HttpPut("{userId}/status")]
     public async Task<IActionResult> UpdateStatus(string userId, [FromBody] AdminUserStatusUpdateDto dto)
     {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var updated = await _adminUserService.UpdateStatusAsync(userId, CurrentUserId, dto);
 
-        if (string.IsNullOrWhiteSpace(currentUserId))
+        if (!updated)
         {
-            return Unauthorized();
+            return NotFound("Korisnik nije pronađen.");
         }
 
-        try
-        {
-            var updated = await _adminUserService.UpdateStatusAsync(userId, currentUserId, dto);
-
-            if (!updated)
-            {
-                return NotFound("Korisnik nije pronađen.");
-            }
-
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 }

@@ -1,15 +1,12 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class WorkoutSessionsController : ControllerBase
+public class WorkoutSessionsController : BaseApiController
 {
     private readonly IWorkoutSessionService _workoutSessionService;
 
@@ -21,29 +18,14 @@ public class WorkoutSessionsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WorkoutSessionReadDto>>> GetAll()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var sessions = await _workoutSessionService.GetAllAsync(userId, isAdmin);
-
+        var sessions = await _workoutSessionService.GetAllAsync(CurrentUserId, IsAdmin);
         return Ok(sessions);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<WorkoutSessionReadDto>> GetById(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var session = await _workoutSessionService.GetByIdAsync(id, userId, isAdmin);
+        var session = await _workoutSessionService.GetByIdAsync(id, CurrentUserId, IsAdmin);
 
         if (session == null)
         {
@@ -56,40 +38,14 @@ public class WorkoutSessionsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<WorkoutSessionReadDto>> Create([FromBody] WorkoutSessionCreateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-
-        try
-        {
-            var created = await _workoutSessionService.CreateAsync(userId, isAdmin, dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
+        var created = await _workoutSessionService.CreateAsync(CurrentUserId, IsAdmin, dto);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] WorkoutSessionUpdateStatusDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var updated = await _workoutSessionService.UpdateStatusAsync(id, userId, isAdmin, dto);
+        var updated = await _workoutSessionService.UpdateStatusAsync(id, CurrentUserId, IsAdmin, dto);
 
         if (!updated)
         {
@@ -102,42 +58,20 @@ public class WorkoutSessionsController : ControllerBase
     [HttpPut("{id:int}/complete")]
     public async Task<IActionResult> Complete(int id, [FromBody] WorkoutSessionCompleteDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        var completed = await _workoutSessionService.CompleteAsync(id, CurrentUserId, IsAdmin, dto);
+
+        if (!completed)
         {
-            return Unauthorized();
+            return NotFound("Sesija treninga nije pronađena.");
         }
 
-        var isAdmin = User.IsInRole("Administrator");
-
-        try
-        {
-            var completed = await _workoutSessionService.CompleteAsync(id, userId, isAdmin, dto);
-
-            if (!completed)
-            {
-                return NotFound("Sesija treninga nije pronađena.");
-            }
-
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var deleted = await _workoutSessionService.DeleteAsync(id, userId, isAdmin);
+        var deleted = await _workoutSessionService.DeleteAsync(id, CurrentUserId, IsAdmin);
 
         if (!deleted)
         {

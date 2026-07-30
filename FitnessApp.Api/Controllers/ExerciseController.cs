@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class ExerciseController : ControllerBase
+public class ExerciseController : BaseApiController
 {
     private readonly IExerciseService _exerciseService;
 
@@ -44,36 +42,23 @@ public class ExerciseController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<ActionResult<ExerciseReadDto>> Create([FromBody] ExerciseCreateUpdateDto dto)
     {
-        try
-        {
-            var created = await _exerciseService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var created = await _exerciseService.CreateAsync(dto);
+
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> Update(int id, [FromBody] ExerciseCreateUpdateDto dto)
     {
-        try
-        {
-            var updated = await _exerciseService.UpdateAsync(id, dto);
+        var updated = await _exerciseService.UpdateAsync(id, dto);
 
-            if (!updated)
-            {
-                return NotFound("Vježba nije pronađena.");
-            }
-
-            return NoContent();
-        }
-        catch (ArgumentException ex)
+        if (!updated)
         {
-            return BadRequest(ex.Message);
+            return NotFound("Vježba nije pronađena.");
         }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]

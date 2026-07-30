@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessApp.Api.Controllers;
 
 [Route("api/[controller]")]
-public class ExerciseCategoriesController : BaseApiController
+public class FitnessGoalsController : BaseApiController
 {
     private readonly ILookupService _lookupService;
 
-    public ExerciseCategoriesController(ILookupService lookupService)
+    public FitnessGoalsController(ILookupService lookupService)
     {
         _lookupService = lookupService;
     }
@@ -17,7 +17,7 @@ public class ExerciseCategoriesController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<LookupDto>>> GetAll()
     {
-        var categories = await _lookupService.GetExerciseCategoriesAsync();
-        return Ok(categories);
+        var goals = await _lookupService.GetFitnessGoalsAsync();
+        return Ok(goals);
     }
 }

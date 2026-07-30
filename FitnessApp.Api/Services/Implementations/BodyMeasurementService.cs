@@ -81,6 +81,11 @@ public class BodyMeasurementService : IBodyMeasurementService
 
     public async Task<BodyMeasurementReadDto> CreateAsync(string userId, BodyMeasurementCreateUpdateDto dto)
     {
+        if (dto.MeasurementDate.Date > DateTime.UtcNow.Date)
+        {
+            throw new ArgumentException("Datum mjerenja ne može biti u budućnosti.");
+        }
+
         var profile = await _unitOfWork.UserProfiles.Query()
             .FirstOrDefaultAsync(x => x.UserId == userId);
 
@@ -127,6 +132,11 @@ public class BodyMeasurementService : IBodyMeasurementService
 
     public async Task<bool> UpdateAsync(int id, string userId, bool isAdmin, BodyMeasurementCreateUpdateDto dto)
     {
+        if (dto.MeasurementDate.Date > DateTime.UtcNow.Date)
+        {
+            throw new ArgumentException("Datum mjerenja ne može biti u budućnosti.");
+        }
+
         var entity = await _unitOfWork.BodyMeasurements.Query()
             .FirstOrDefaultAsync(x => x.Id == id);
 

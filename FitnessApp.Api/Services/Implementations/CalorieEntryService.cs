@@ -77,6 +77,11 @@ public class CalorieEntryService : ICalorieEntryService
 
     public async Task<CalorieEntryReadDto> CreateAsync(string userId, CalorieEntryCreateUpdateDto dto)
     {
+        if (dto.EntryDate.Date > DateTime.UtcNow.Date)
+        {
+            throw new ArgumentException("Datum unosa kalorija ne može biti u budućnosti.");
+        }
+
         var entryDate = dto.EntryDate.Date;
 
         var existing = await _unitOfWork.CalorieEntries.Query()
@@ -111,6 +116,11 @@ public class CalorieEntryService : ICalorieEntryService
 
     public async Task<bool> UpdateAsync(int id, string userId, bool isAdmin, CalorieEntryCreateUpdateDto dto)
     {
+        if (dto.EntryDate.Date > DateTime.UtcNow.Date)
+        {
+            throw new ArgumentException("Datum unosa kalorija ne može biti u budućnosti.");
+        }
+
         var entity = await _unitOfWork.CalorieEntries.Query()
             .FirstOrDefaultAsync(x => x.Id == id);
 

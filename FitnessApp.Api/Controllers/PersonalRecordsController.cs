@@ -1,15 +1,11 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class PersonalRecordsController : ControllerBase
+public class PersonalRecordsController : BaseApiController
 {
     private readonly IPersonalRecordService _personalRecordService;
 
@@ -24,14 +20,12 @@ public class PersonalRecordsController : ControllerBase
         [FromQuery] DateTime? from = null,
         [FromQuery] DateTime? to = null)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var items = await _personalRecordService.GetAllAsync(userId, isAdmin, exerciseId, from, to);
+        var items = await _personalRecordService.GetAllAsync(
+            CurrentUserId,
+            IsAdmin,
+            exerciseId,
+            from,
+            to);
 
         return Ok(items);
     }
@@ -39,14 +33,10 @@ public class PersonalRecordsController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PersonalRecordReadDto>> GetById(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var item = await _personalRecordService.GetByIdAsync(id, userId, isAdmin);
+        var item = await _personalRecordService.GetByIdAsync(
+            id,
+            CurrentUserId,
+            IsAdmin);
 
         if (item == null)
         {
@@ -59,66 +49,35 @@ public class PersonalRecordsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PersonalRecordReadDto>> Create([FromBody] PersonalRecordCreateUpdateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
+        var created = await _personalRecordService.CreateAsync(CurrentUserId, dto);
 
-        try
-        {
-            var created = await _personalRecordService.CreateAsync(userId, dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] PersonalRecordCreateUpdateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        var updated = await _personalRecordService.UpdateAsync(
+            id,
+            CurrentUserId,
+            IsAdmin,
+            dto);
+
+        if (!updated)
         {
-            return Unauthorized();
+            return NotFound("Osobni rekord nije pronađen.");
         }
 
-        var isAdmin = User.IsInRole("Administrator");
-
-        try
-        {
-            var updated = await _personalRecordService.UpdateAsync(id, userId, isAdmin, dto);
-
-            if (!updated)
-            {
-                return NotFound("Osobni rekord nije pronađen.");
-            }
-
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var deleted = await _personalRecordService.DeleteAsync(id, userId, isAdmin);
+        var deleted = await _personalRecordService.DeleteAsync(
+            id,
+            CurrentUserId,
+            IsAdmin);
 
         if (!deleted)
         {

@@ -12,11 +12,15 @@ public class MealCreateUpdateDto
     public string? Description { get; set; }
 
     [Required]
+    [Range(1, int.MaxValue)]
     public int Calories { get; set; }
 
+    [Range(typeof(decimal), "0", "1000")]
     public decimal? ProteinGrams { get; set; }
 
+    [Range(typeof(decimal), "0", "1000")]
     public decimal? CarbsGrams { get; set; }
 
+    [Range(typeof(decimal), "0", "1000")]
     public decimal? FatGrams { get; set; }
 }

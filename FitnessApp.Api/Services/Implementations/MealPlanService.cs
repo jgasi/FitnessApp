@@ -99,6 +99,16 @@ public class MealPlanService : IMealPlanService
                 .ToList()
         };
 
+        if (dto.Meals.Select(x => x.MealId).Distinct().Count() != dto.Meals.Count)
+        {
+            throw new ArgumentException("Isti obrok ne smije biti dodan više puta u plan.");
+        }
+
+        if (dto.Meals.Select(x => x.DisplayOrder).Distinct().Count() != dto.Meals.Count)
+        {
+            throw new ArgumentException("Redoslijed obroka mora biti jedinstven.");
+        }
+
         await _unitOfWork.MealPlans.AddAsync(mealPlan);
         await _unitOfWork.SaveChangesAsync();
 
@@ -172,6 +182,16 @@ public class MealPlanService : IMealPlanService
                 PortionMultiplier = item.PortionMultiplier,
                 Notes = item.Notes
             });
+        }
+
+        if (dto.Meals.Select(x => x.MealId).Distinct().Count() != dto.Meals.Count)
+        {
+            throw new ArgumentException("Isti obrok ne smije biti dodan više puta u plan.");
+        }
+
+        if (dto.Meals.Select(x => x.DisplayOrder).Distinct().Count() != dto.Meals.Count)
+        {
+            throw new ArgumentException("Redoslijed obroka mora biti jedinstven.");
         }
 
         await _unitOfWork.SaveChangesAsync();

@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class MealsController : ControllerBase
+public class MealsController : BaseApiController
 {
     private readonly IMealService _mealService;
 
@@ -41,15 +39,9 @@ public class MealsController : ControllerBase
     [Authorize(Roles = "Administrator")]
     public async Task<ActionResult<MealReadDto>> Create([FromBody] MealCreateUpdateDto dto)
     {
-        try
-        {
-            var created = await _mealService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var created = await _mealService.CreateAsync(dto);
+
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]

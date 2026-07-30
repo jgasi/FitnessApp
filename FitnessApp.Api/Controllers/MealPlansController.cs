@@ -1,15 +1,11 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class MealPlansController : ControllerBase
+public class MealPlansController : BaseApiController
 {
     private readonly IMealPlanService _mealPlanService;
 
@@ -21,29 +17,14 @@ public class MealPlansController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MealPlanReadDto>>> GetAll()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var plans = await _mealPlanService.GetAllAsync(userId, isAdmin);
-
+        var plans = await _mealPlanService.GetAllAsync(CurrentUserId, IsAdmin);
         return Ok(plans);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<MealPlanReadDto>> GetById(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var plan = await _mealPlanService.GetByIdAsync(id, userId, isAdmin);
+        var plan = await _mealPlanService.GetByIdAsync(id, CurrentUserId, IsAdmin);
 
         if (plan == null)
         {
@@ -56,70 +37,28 @@ public class MealPlansController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<MealPlanReadDto>> Create([FromBody] MealPlanCreateUpdateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
+        var created = await _mealPlanService.CreateAsync(CurrentUserId, dto);
 
-        try
-        {
-            var created = await _mealPlanService.CreateAsync(userId, dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] MealPlanCreateUpdateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        var updated = await _mealPlanService.UpdateAsync(id, CurrentUserId, IsAdmin, dto);
+
+        if (!updated)
         {
-            return Unauthorized();
+            return NotFound("Plan prehrane nije pronađen.");
         }
 
-        var isAdmin = User.IsInRole("Administrator");
-
-        try
-        {
-            var updated = await _mealPlanService.UpdateAsync(id, userId, isAdmin, dto);
-
-            if (!updated)
-            {
-                return NotFound("Plan prehrane nije pronađen.");
-            }
-
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var deleted = await _mealPlanService.DeleteAsync(id, userId, isAdmin);
+        var deleted = await _mealPlanService.DeleteAsync(id, CurrentUserId, IsAdmin);
 
         if (!deleted)
         {

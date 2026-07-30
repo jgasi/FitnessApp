@@ -1,15 +1,11 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class ProfilesController : ControllerBase
+public class ProfilesController : BaseApiController
 {
     private readonly IProfileService _profileService;
 
@@ -21,14 +17,7 @@ public class ProfilesController : ControllerBase
     [HttpGet("me")]
     public async Task<ActionResult<UserProfileReadDto>> GetMyProfile()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var profile = await _profileService.GetMyProfileAsync(userId);
+        var profile = await _profileService.GetMyProfileAsync(CurrentUserId);
 
         if (profile == null)
         {
@@ -41,27 +30,13 @@ public class ProfilesController : ControllerBase
     [HttpPut("me")]
     public async Task<IActionResult> UpdateMyProfile([FromBody] UserProfileUpdateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var updated = await _profileService.UpdateMyProfileAsync(CurrentUserId, dto);
 
-        if (string.IsNullOrWhiteSpace(userId))
+        if (!updated)
         {
-            return Unauthorized();
+            return NotFound("Profil nije pronađen.");
         }
 
-        try
-        {
-            var updated = await _profileService.UpdateMyProfileAsync(userId, dto);
-
-            if (!updated)
-            {
-                return NotFound("Profil nije pronađen.");
-            }
-
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return NoContent();
     }
 }

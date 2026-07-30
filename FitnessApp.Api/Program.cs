@@ -1,6 +1,7 @@
 using System.Text;
 using FitnessApp.Api.Data;
 using FitnessApp.Api.Data.Repositories;
+using FitnessApp.Api.Middlewares;
 using FitnessApp.Api.Models;
 using FitnessApp.Api.Services.Implementations;
 using FitnessApp.Api.Services.Interfaces;
@@ -61,6 +62,7 @@ namespace FitnessApp.Api
             });
 
             builder.Services.AddAuthorization();
+            builder.Services.AddMemoryCache();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -126,6 +128,8 @@ namespace FitnessApp.Api
                 await SeedRolesAsync(roleManager);
                 await SeedAdminUserAsync(userManager, builder.Configuration);
             }
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             if (app.Environment.IsDevelopment())
             {

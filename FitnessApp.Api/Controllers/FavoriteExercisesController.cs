@@ -1,15 +1,11 @@
-﻿using System.Security.Claims;
-using FitnessApp.Api.DTOs;
+﻿using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class FavoriteExercisesController : ControllerBase
+public class FavoriteExercisesController : BaseApiController
 {
     private readonly IFavoriteExerciseService _favoriteExerciseService;
 
@@ -21,29 +17,14 @@ public class FavoriteExercisesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FavoriteExerciseReadDto>>> GetAll()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var favorites = await _favoriteExerciseService.GetAllAsync(userId, isAdmin);
-
+        var favorites = await _favoriteExerciseService.GetAllAsync(CurrentUserId, IsAdmin);
         return Ok(favorites);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FavoriteExerciseReadDto>> GetById(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var favorite = await _favoriteExerciseService.GetByIdAsync(id, userId, isAdmin);
+        var favorite = await _favoriteExerciseService.GetByIdAsync(id, CurrentUserId, IsAdmin);
 
         if (favorite == null)
         {
@@ -56,38 +37,15 @@ public class FavoriteExercisesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FavoriteExerciseReadDto>> Create([FromBody] FavoriteExerciseCreateDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
+        var created = await _favoriteExerciseService.CreateAsync(CurrentUserId, dto);
 
-        try
-        {
-            var created = await _favoriteExerciseService.CreateAsync(userId, dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var isAdmin = User.IsInRole("Administrator");
-        var deleted = await _favoriteExerciseService.DeleteAsync(id, userId, isAdmin);
+        var deleted = await _favoriteExerciseService.DeleteAsync(id, CurrentUserId, IsAdmin);
 
         if (!deleted)
         {
