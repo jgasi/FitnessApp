@@ -8,10 +8,14 @@ namespace FitnessApp.Api.Controllers;
 public class ProfilesController : BaseApiController
 {
     private readonly IProfileService _profileService;
+    private readonly IActivityLogService _activityLogService;
 
-    public ProfilesController(IProfileService profileService)
+    public ProfilesController(
+        IProfileService profileService,
+        IActivityLogService activityLogService)
     {
         _profileService = profileService;
+        _activityLogService = activityLogService;
     }
 
     [HttpGet("me")]
@@ -36,6 +40,13 @@ public class ProfilesController : BaseApiController
         {
             return NotFound("Profil nije pronađen.");
         }
+
+        await _activityLogService.LogAsync(
+            CurrentUserId,
+            "ProfileUpdated",
+            "UserProfile",
+            CurrentUserId,
+            "Korisnik je ažurirao svoj profil.");
 
         return NoContent();
     }

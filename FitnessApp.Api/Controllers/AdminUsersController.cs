@@ -10,10 +10,14 @@ namespace FitnessApp.Api.Controllers;
 public class AdminUsersController : BaseApiController
 {
     private readonly IAdminUserService _adminUserService;
+    private readonly IActivityLogService _activityLogService;
 
-    public AdminUsersController(IAdminUserService adminUserService)
+    public AdminUsersController(
+        IAdminUserService adminUserService,
+        IActivityLogService activityLogService)
     {
         _adminUserService = adminUserService;
+        _activityLogService = activityLogService;
     }
 
     [HttpGet]
@@ -46,6 +50,13 @@ public class AdminUsersController : BaseApiController
             return NotFound("Korisnik nije pronađen.");
         }
 
+        await _activityLogService.LogAsync(
+            CurrentUserId,
+            "RoleChanged",
+            "ApplicationUser",
+            userId,
+            $"Promijenjena uloga korisnika u '{dto.Role}'.");
+
         return NoContent();
     }
 
@@ -58,6 +69,15 @@ public class AdminUsersController : BaseApiController
         {
             return NotFound("Korisnik nije pronađen.");
         }
+
+        await _activityLogService.LogAsync(
+            CurrentUserId,
+            "StatusChanged",
+            "ApplicationUser",
+            userId,
+            dto.IsActive
+                ? "Korisnički račun je aktiviran."
+                : "Korisnički račun je deaktiviran.");
 
         return NoContent();
     }

@@ -24,6 +24,7 @@ public class UnitOfWork : IUnitOfWork
     private IGenericRepository<Meal>? _meals;
     private IGenericRepository<MealPlan>? _mealPlans;
     private IGenericRepository<MealPlanMeal>? _mealPlanMeals;
+    private IGenericRepository<ActivityLog>? _activityLogs;
     public UnitOfWork(ApplicationDbContext context)
     {
         _context = context;
@@ -46,6 +47,7 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<Meal> Meals => _meals ??= new GenericRepository<Meal>(_context);
     public IGenericRepository<MealPlan> MealPlans => _mealPlans ??= new GenericRepository<MealPlan>(_context);
     public IGenericRepository<MealPlanMeal> MealPlanMeals => _mealPlanMeals ??= new GenericRepository<MealPlanMeal>(_context);
+    public IGenericRepository<ActivityLog> ActivityLogs => _activityLogs ??= new GenericRepository<ActivityLog>(_context);
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

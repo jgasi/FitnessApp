@@ -80,6 +80,7 @@ namespace FitnessApp.Api
             builder.Services.AddScoped<IMealPlanService, MealPlanService>();
             builder.Services.AddScoped<IStatisticsService, StatisticsService>();
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+            builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 
 
             builder.Services.AddControllers();

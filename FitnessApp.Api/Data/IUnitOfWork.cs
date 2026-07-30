@@ -22,6 +22,7 @@ public interface IUnitOfWork
     IGenericRepository<Meal> Meals { get; }
     IGenericRepository<MealPlan> MealPlans { get; }
     IGenericRepository<MealPlanMeal> MealPlanMeals { get; }
+    IGenericRepository<ActivityLog> ActivityLogs { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

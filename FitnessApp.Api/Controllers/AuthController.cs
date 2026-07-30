@@ -1,6 +1,7 @@
 ﻿using FitnessApp.Api.Data;
 using FitnessApp.Api.DTOs;
 using FitnessApp.Api.Models;
+using FitnessApp.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -17,15 +18,18 @@ public class AuthController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IActivityLogService _activityLogService;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
         IConfiguration configuration,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IActivityLogService activityLogService)
     {
         _userManager = userManager;
         _configuration = configuration;
         _unitOfWork = unitOfWork;
+        _activityLogService = activityLogService;
     }
 
     [HttpPost("register")]
@@ -71,6 +75,13 @@ public class AuthController : ControllerBase
         await _unitOfWork.UserProfiles.AddAsync(profile);
         await _unitOfWork.SaveChangesAsync();
 
+        await _activityLogService.LogAsync(
+            user.Id,
+            "Register",
+            "Auth",
+            user.Id,
+            "Korisnik se uspješno registrirao.");
+
         return Ok("Korisnik je uspješno registriran.");
     }
 
@@ -98,6 +109,13 @@ public class AuthController : ControllerBase
 
         var token = await GenerateJwtTokenAsync(user);
         var roles = await _userManager.GetRolesAsync(user);
+
+        await _activityLogService.LogAsync(
+            user.Id,
+            "Login",
+            "Auth",
+            user.Id,
+            "Uspješna prijava.");
 
         return Ok(new AuthResponseDto
         {
