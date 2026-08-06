@@ -11,9 +11,9 @@ public class UserProfileUpdateDto
     [MaxLength(20)]
     public string? Gender { get; set; }
 
-    [Range(typeof(decimal), "0.1", "300")]
+    [Range(0.1, 300)]
     public decimal? HeightCm { get; set; }
 
-    [Range(typeof(decimal), "0.1", "500")]
+    [Range(0.1, 500)]
     public decimal? CurrentWeightKg { get; set; }
 }

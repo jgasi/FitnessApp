@@ -471,3 +471,55 @@ input {
     padding: 18px;
   }
 }
+
+.profile-page {
+  display: grid;
+  gap: 20px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+}
+
+.profile-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1.1fr 1fr;
+}
+
+.readonly-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.readonly-item {
+  padding: 14px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid #334155;
+  display: grid;
+  gap: 6px;
+}
+
+.readonly-item span {
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+.readonly-item strong {
+  font-size: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .readonly-grid {
+    grid-template-columns: 1fr;
+  }
+}

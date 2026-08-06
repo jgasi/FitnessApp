@@ -6,6 +6,7 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ComingSoonPage from "./pages/common/ComingSoonPage";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 export default function App() {
   const { isAuthenticated } = useAuth();
@@ -23,15 +24,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route
-            path="/profile"
-            element={
-              <ComingSoonPage
-                title="Profil"
-                description="Ovdje ćemo uređivati korisničke podatke i fitness cilj."
-              />
-            }
-          />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/exercises"
             element={

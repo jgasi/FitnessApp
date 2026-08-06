@@ -40,6 +40,7 @@ public class ProfileService : IProfileService
         {
             Id = profile.Id,
             UserId = profile.UserId,
+            UserName = user.UserName ?? string.Empty,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email ?? string.Empty,

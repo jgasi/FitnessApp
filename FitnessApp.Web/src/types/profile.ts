@@ -1,6 +1,7 @@
 export interface UserProfileReadDto {
   id: number;
   userId: string;
+  userName: string;
   firstName: string;
   lastName: string;
   email: string;
