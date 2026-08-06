@@ -1,54 +1,57 @@
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardPage() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="page-shell">
-      <div className="card dashboard-card">
-        <div className="dashboard-header">
-          <div>
-            <p className="eyebrow">FitnessApp</p>
-            <h1 className="title">Dobro došao, {user?.userName ?? "korisniče"}!</h1>
-            <p className="subtitle">
-              Ovdje će kasnije biti pregled aktivnosti, treninga, prehrane i napretka.
-            </p>
-          </div>
-
-          <button className="button button-secondary" onClick={handleLogout}>
-            Odjava
-          </button>
+    <div className="dashboard-page">
+      <section className="hero-card">
+        <div>
+          <p className="eyebrow">FitnessApp</p>
+          <h1 className="title">Dobro došao, {user?.userName ?? "korisniče"}!</h1>
+          <p className="subtitle">
+            Ovo je početni pregled aplikacije. Kasnije ćemo ovdje prikazivati stvarne
+            podatke iz profila, treninga, prehrane i napretka.
+          </p>
         </div>
 
-        <div className="dashboard-grid">
-          <div className="info-card">
-            <h3>Profil</h3>
-            <p>{user?.email}</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Treninzi</h3>
-            <p>Uskoro lista planova i sesija.</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Prehrana</h3>
-            <p>Uskoro planovi prehrane i kalorije.</p>
-          </div>
-
-          <div className="info-card">
-            <h3>Statistika</h3>
-            <p>Uskoro grafovi napretka i PR-ovi.</p>
-          </div>
+        <div className="hero-badge">
+          <span>Uloga</span>
+          <strong>{user?.roles?.join(", ") ?? "User"}</strong>
         </div>
-      </div>
+      </section>
+
+      <section className="dashboard-grid">
+        <div className="metric-card">
+          <span>Korisinik</span>
+          <strong>{user?.userName ?? "-"}</strong>
+        </div>
+
+        <div className="metric-card">
+          <span>Email</span>
+          <strong>{user?.email ?? "-"}</strong>
+        </div>
+
+        <div className="metric-card">
+          <span>Fitness cilj</span>
+          <strong>Uskoro</strong>
+        </div>
+
+        <div className="metric-card">
+          <span>Zadnje mjerenje</span>
+          <strong>Uskoro</strong>
+        </div>
+
+        <div className="metric-card">
+          <span>Zadnji trening</span>
+          <strong>Uskoro</strong>
+        </div>
+
+        <div className="metric-card">
+          <span>Zadnji PR</span>
+          <strong>Uskoro</strong>
+        </div>
+      </section>
     </div>
   );
 }
