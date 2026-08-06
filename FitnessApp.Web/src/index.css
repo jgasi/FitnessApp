@@ -523,3 +523,148 @@ input {
     grid-template-columns: 1fr;
   }
 }
+
+.exercises-page {
+  display: grid;
+  gap: 20px;
+}
+
+.exercises-toolbar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.exercise-toolbar-actions {
+  display: flex;
+  align-items: end;
+}
+
+.exercises-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-muted {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.exercises-list {
+  display: grid;
+  gap: 12px;
+  max-height: 650px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.exercise-list-item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #334155;
+  background: #111827;
+  color: #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.exercise-list-item:hover {
+  transform: translateY(-1px);
+  border-color: #60a5fa;
+}
+
+.exercise-list-item.active {
+  border-color: #60a5fa;
+  background: rgba(37, 99, 235, 0.18);
+}
+
+.exercise-list-item-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.exercise-list-item-head span {
+  color: #93c5fd;
+  font-size: 0.88rem;
+}
+
+.exercise-list-item p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.exercise-detail {
+  display: grid;
+  gap: 14px;
+}
+
+.detail-block {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid #334155;
+}
+
+.detail-block span {
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+.detail-block strong {
+  font-size: 1rem;
+}
+
+.detail-block p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.exercise-video-link {
+  width: fit-content;
+}
+
+.empty-state {
+  padding: 18px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px dashed #475569;
+  color: #94a3b8;
+}
+
+@media (max-width: 1024px) {
+  .exercises-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .exercises-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .exercises-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

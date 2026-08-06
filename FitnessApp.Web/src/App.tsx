@@ -7,6 +7,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ComingSoonPage from "./pages/common/ComingSoonPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import ExercisesPage from "./pages/exercises/ExercisesPage";
 
 export default function App() {
   const { isAuthenticated } = useAuth();
@@ -25,15 +26,8 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route
-            path="/exercises"
-            element={
-              <ComingSoonPage
-                title="Vježbe"
-                description="Ovdje dolazi baza vježbi, search, filteri i detalji vježbi."
-              />
-            }
-          />
+          <Route path="/exercises" element={<ExercisesPage />} />
+          
           <Route
             path="/workout-plans"
             element={
